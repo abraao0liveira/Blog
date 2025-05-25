@@ -1,0 +1,10 @@
+
+*.dll
+
+*.pdb
+
+Blog/obj/Debug/net8.0/Blog.AssemblyInfo.cs
+
+*.cache
+
+Blog/obj/Debug/net8.0/Blog.sourcelink.json
