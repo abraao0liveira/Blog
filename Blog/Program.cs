@@ -1,3 +1,86 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Blog.Models;
+using Dapper.Contrib.Extensions;
+using Microsoft.Data.SqlClient;
 
-Console.WriteLine("Hello, World!");
+namespace Blog;
+
+class Program
+{
+    private const string ConnectionString =
+        @"Server=localhost,1433;Database=blog_balta;User ID=sa;Password=C3rul3@nC@v3_150;Trusted_Connection=False;MultipleActiveResultSets=true;TrustServerCertificate=true;";
+
+    static void Main(string[] args)
+    {
+         ReadUsers();
+         ReadUser(1);
+         CreateUser();
+         UpdateUser();
+         DeleteUser(2);
+    }
+
+    public static void ReadUsers()
+    {
+        using var connection = new SqlConnection(ConnectionString);
+
+        var users = connection.GetAll<User>(); //Pega todos os campos de user
+        foreach (var user in users)
+        {
+            Console.WriteLine(user.Name);
+        }
+    }
+    
+    public static void ReadUser(int id)
+    {
+        using var connection = new SqlConnection(ConnectionString);
+
+        var user = connection.Get<User>(id); //Pega um usuario
+        Console.WriteLine(user.Name);
+    }
+    
+    public static void CreateUser()
+    {
+        var user = new User
+        {
+            Name = "Sofia Mendes",
+            Email = "sofia@sofia.com.br",
+            password_hash = "HASH",
+            Bio = "Medica",
+            Image = "https://",
+            Slug = "sofia-mendes"
+        };
+        
+        using var connection = new SqlConnection(ConnectionString);
+
+        connection.Insert<User>(user); //Salva um usuario
+        Console.WriteLine("Cadastro realizado com sucesso");
+    }
+    
+    public static void UpdateUser()
+    {
+        var user = new User
+        {
+            Id = 3,
+            Name = "Sofia Mendes",
+            Email = "sofia@sofia.com.br",
+            password_hash = "HASH",
+            Bio = "Medica | Diretora de Hospital",
+            Image = "https://",
+            Slug = "sofia-mendes"
+        };
+        
+        using var connection = new SqlConnection(ConnectionString);
+
+        connection.Update<User>(user); //Atualiza um usuario
+        Console.WriteLine("Atualização realizada com sucesso");
+    }
+    
+    public static void DeleteUser(int id)
+    {
+        using var connection = new SqlConnection(ConnectionString);
+        
+        var user = connection.Get<User>(id);
+
+        connection.Delete<User>(user); //Deleta um usuario
+        Console.WriteLine("Exclusão realizada com sucesso");
+    }
+}
