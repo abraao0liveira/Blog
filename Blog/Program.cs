@@ -1,6 +1,5 @@
 ﻿using Blog.Models;
 using Blog.Repositories;
-using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 
 namespace Blog;
@@ -15,8 +14,9 @@ class Program
         var connection = new SqlConnection(ConnectionString);
         connection.Open();
         
-         ReadUsers(connection);
-         ReadRoles(connection);
+         ReadUsersWithRoles(connection);
+         // ReadRoles(connection);
+         // ReadTags(connection);
          // ReadUser(1);
          // CreateUser();
          // UpdateUser();
@@ -25,22 +25,54 @@ class Program
          connection.Close();
     }
 
-    public static void ReadUsers(SqlConnection connection)
+    public static void ReadUsersWithRoles(SqlConnection connection)
     {
         var repository = new UserRepository(connection);
-        var users = repository.GetAll();
+        var items = repository.GetWithRoles();
+
+        foreach (var item in items)
+        {
+            Console.WriteLine(item.Name);
+            foreach (var role in item.Roles)
+            {
+                Console.WriteLine($" - {role.Name}");
+            }
+        }
+    }
+    
+    public static void CreateUser(SqlConnection connection)
+    {
+        var user = new User
+        {
+            Name = "Sofia Mendes",
+            Email = "sofia@sofia.com.br",
+            password_hash = "HASH",
+            Bio = "Medica",
+            Image = "https://",
+            Slug = "sofia-mendes"
+        };
         
-        foreach (var user in users)
-            Console.WriteLine(user.Name);
+        var repository = new Repository<User>(connection);
+        repository.Create(user);
+        Console.WriteLine("Cadastro realizado com sucesso");
     }
     
     public static void ReadRoles(SqlConnection connection)
     {
-        var repository = new RoleRepository(connection);
-        var roles = repository.GetAll();
+        var repository = new Repository<Role>(connection);
+        var items = repository.GetAll();
         
-        foreach (var role in roles)
-            Console.WriteLine(role.Name);
+        foreach (var item in items)
+            Console.WriteLine(item.Name);
+    }
+    
+    public static void ReadTags(SqlConnection connection)
+    {
+        var repository = new Repository<Tag>(connection);
+        var items = repository.GetAll();
+        
+        foreach (var item in items)
+            Console.WriteLine(item.Name);
     }
     
     // public static void ReadUser(int id)
@@ -49,23 +81,6 @@ class Program
     //
     //     var user = connection.Get<User>(id); //Pega um usuario
     //     Console.WriteLine(user.Name);
-    // }
-    // public static void CreateUser()
-    // {
-    //     var user = new User
-    //     {
-    //         Name = "Sofia Mendes",
-    //         Email = "sofia@sofia.com.br",
-    //         password_hash = "HASH",
-    //         Bio = "Medica",
-    //         Image = "https://",
-    //         Slug = "sofia-mendes"
-    //     };
-    //     
-    //     using var connection = new SqlConnection(ConnectionString);
-    //
-    //     connection.Insert<User>(user); //Salva um usuario
-    //     Console.WriteLine("Cadastro realizado com sucesso");
     // }
     // public static void UpdateUser()
     // {
