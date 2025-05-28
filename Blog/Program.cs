@@ -54,7 +54,42 @@ class Program
         
         var repository = new Repository<User>(connection);
         repository.Create(user);
+        
         Console.WriteLine("Cadastro realizado com sucesso");
+    }
+    
+    public static void ReadUser(SqlConnection connection, int id)
+    {
+        var repository = new Repository<User>(connection);
+        var user = repository.Get(id);
+        
+        Console.WriteLine(user.Name);
+    }
+    
+    public static void UpdateUser(SqlConnection connection)
+    {
+        var user = new User
+        {
+            Id = 3,
+            Name = "Sofia Mendes",
+            Email = "sofia@sofia.com.br",
+            password_hash = "HASH",
+            Bio = "Medica | Diretora de Hospital",
+            Image = "https://",
+            Slug = "sofia-mendes"
+        };
+        
+        var repository = new Repository<User>(connection);
+        repository.Update(user);
+        
+        Console.WriteLine("Atualização realizada com sucesso");
+    }
+    public static void DeleteUser(SqlConnection connection, User user)
+    {
+        var repository = new Repository<User>(connection);
+        repository.Delete(user);
+        
+        Console.WriteLine("Exclusão realizada com sucesso");
     }
     
     public static void ReadRoles(SqlConnection connection)
@@ -74,39 +109,4 @@ class Program
         foreach (var item in items)
             Console.WriteLine(item.Name);
     }
-    
-    // public static void ReadUser(int id)
-    // {
-    //     using var connection = new SqlConnection(ConnectionString);
-    //
-    //     var user = connection.Get<User>(id); //Pega um usuario
-    //     Console.WriteLine(user.Name);
-    // }
-    // public static void UpdateUser()
-    // {
-    //     var user = new User
-    //     {
-    //         Id = 3,
-    //         Name = "Sofia Mendes",
-    //         Email = "sofia@sofia.com.br",
-    //         password_hash = "HASH",
-    //         Bio = "Medica | Diretora de Hospital",
-    //         Image = "https://",
-    //         Slug = "sofia-mendes"
-    //     };
-    //     
-    //     using var connection = new SqlConnection(ConnectionString);
-    //
-    //     connection.Update<User>(user); //Atualiza um usuario
-    //     Console.WriteLine("Atualização realizada com sucesso");
-    // }
-    // public static void DeleteUser(int id)
-    // {
-    //     using var connection = new SqlConnection(ConnectionString);
-    //     
-    //     var user = connection.Get<User>(id);
-    //
-    //     connection.Delete<User>(user); //Deleta um usuario
-    //     Console.WriteLine("Exclusão realizada com sucesso");
-    // }
 }
